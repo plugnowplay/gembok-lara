@@ -32,6 +32,51 @@ class PaymentGatewayService
     }
 
     /**
+     * Create transaction for order (used by OrderController)
+     */
+    public function createTransaction(array $data)
+    {
+        try {
+            $params = [
+                'transaction_details' => [
+                    'order_id' => $data['order_id'],
+                    'gross_amount' => (int) $data['gross_amount'],
+                ],
+                'customer_details' => [
+                    'first_name' => $data['customer_name'],
+                    'email' => $data['customer_email'] ?? 'customer@example.com',
+                    'phone' => $data['customer_phone'],
+                ],
+                'item_details' => $data['item_details'] ?? [],
+            ];
+
+            $snapUrl = config('services.midtrans.is_production')
+                ? 'https://app.midtrans.com/snap/v1/transactions'
+                : 'https://app.sandbox.midtrans.com/snap/v1/transactions';
+
+            $response = Http::withBasicAuth($this->midtransServerKey, '')
+                ->post($snapUrl, $params);
+
+            if ($response->successful()) {
+                $responseData = $response->json();
+                return [
+                    'success' => true,
+                    'token' => $responseData['token'],
+                    'redirect_url' => $responseData['redirect_url'],
+                    'order_id' => $data['order_id']
+                ];
+            }
+
+            Log::error('Midtrans transaction failed', ['response' => $response->body()]);
+            return ['success' => false, 'message' => 'Transaction creation failed'];
+            
+        } catch (\Exception $e) {
+            Log::error('Midtrans transaction exception: ' . $e->getMessage());
+            return ['success' => false, 'message' => $e->getMessage()];
+        }
+    }
+
+    /**
      * Create payment for invoice
      */
     public function createPayment($invoice, $customer, $gateway = null)

@@ -14,11 +14,20 @@ class MikrotikService
     public function __construct()
     {
         try {
+            $host = config('services.mikrotik.host');
+            $enabled = config('services.mikrotik.enabled', false);
+            
+            // Skip connection if not enabled or host not configured
+            if (!$enabled || empty($host)) {
+                $this->connected = false;
+                return;
+            }
+            
             $this->client = new Client([
-                'host' => config('services.mikrotik.host'),
+                'host' => $host,
                 'user' => config('services.mikrotik.username'),
                 'pass' => config('services.mikrotik.password'),
-                'port' => config('services.mikrotik.port', 8728),
+                'port' => (int) config('services.mikrotik.port', 8728),
             ]);
             $this->connected = true;
         } catch (\Exception $e) {

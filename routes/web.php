@@ -14,8 +14,17 @@ use App\Http\Controllers\Admin\OdpController;
 
 // Public Routes
 Route::get('/', function () {
-    return view('welcome');
+    $packages = \App\Models\Package::where('is_active', true)->orderBy('price')->get();
+    return view('welcome', compact('packages'));
 })->name('home');
+
+// Order Routes (Public)
+Route::prefix('order')->name('order.')->group(function () {
+    Route::get('/package/{package}', [\App\Http\Controllers\OrderController::class, 'create'])->name('create');
+    Route::post('/store', [\App\Http\Controllers\OrderController::class, 'store'])->name('store');
+    Route::get('/success/{orderNumber}', [\App\Http\Controllers\OrderController::class, 'success'])->name('success');
+    Route::get('/track', [\App\Http\Controllers\OrderController::class, 'track'])->name('track');
+});
 
 // Default login route (redirect to admin login)
 Route::get('/login', function () {
@@ -110,8 +119,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // WhatsApp Gateway
         Route::prefix('whatsapp')->name('whatsapp.')->group(function () {
             Route::get('/', [\App\Http\Controllers\Admin\WhatsAppController::class, 'index'])->name('index');
+            Route::get('/logs', [\App\Http\Controllers\Admin\WhatsAppController::class, 'logs'])->name('logs');
+            Route::get('/test', [\App\Http\Controllers\Admin\WhatsAppController::class, 'test'])->name('test');
+            Route::post('/test', [\App\Http\Controllers\Admin\WhatsAppController::class, 'sendTest'])->name('test.send');
             Route::post('/send', [\App\Http\Controllers\Admin\WhatsAppController::class, 'send'])->name('send');
             Route::get('/status', [\App\Http\Controllers\Admin\WhatsAppController::class, 'status'])->name('status');
+            Route::post('/resend/{log}', [\App\Http\Controllers\Admin\WhatsAppController::class, 'resend'])->name('resend');
             Route::post('/invoice/{invoice}', [\App\Http\Controllers\Admin\WhatsAppController::class, 'sendInvoice'])->name('invoice');
             Route::post('/reminder/{invoice}', [\App\Http\Controllers\Admin\WhatsAppController::class, 'sendReminder'])->name('reminder');
             Route::post('/bulk-invoice', [\App\Http\Controllers\Admin\WhatsAppController::class, 'bulkSendInvoice'])->name('bulk.invoice');
@@ -131,6 +144,15 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::prefix('reports')->name('reports.')->group(function () {
             Route::get('/', [\App\Http\Controllers\Admin\ReportController::class, 'index'])->name('index');
             Route::get('/export', [\App\Http\Controllers\Admin\ReportController::class, 'export'])->name('export');
+        });
+        
+        // Orders Management
+        Route::prefix('orders')->name('orders.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Admin\OrderController::class, 'index'])->name('index');
+            Route::get('/{order}', [\App\Http\Controllers\Admin\OrderController::class, 'show'])->name('show');
+            Route::post('/{order}/update-status', [\App\Http\Controllers\Admin\OrderController::class, 'updateStatus'])->name('update-status');
+            Route::post('/{order}/confirm-payment', [\App\Http\Controllers\Admin\OrderController::class, 'confirmPayment'])->name('confirm-payment');
+            Route::post('/{order}/complete', [\App\Http\Controllers\Admin\OrderController::class, 'complete'])->name('complete');
         });
     });
 });

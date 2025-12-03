@@ -23,12 +23,12 @@ class ReportController extends Controller
 
         // Summary Stats
         $totalRevenue = Invoice::where('status', 'paid')
-            ->whereBetween('paid_at', [$startDate, $endDate])
-            ->sum('total');
+            ->whereBetween('paid_date', [$startDate, $endDate])
+            ->sum('amount');
 
         $previousRevenue = Invoice::where('status', 'paid')
-            ->whereBetween('paid_at', [$previousStart, $startDate])
-            ->sum('total');
+            ->whereBetween('paid_date', [$previousStart, $startDate])
+            ->sum('amount');
 
         $revenueGrowth = $previousRevenue > 0 
             ? round((($totalRevenue - $previousRevenue) / $previousRevenue) * 100, 1) 
@@ -43,7 +43,7 @@ class ReportController extends Controller
             : 0;
 
         $paidInvoices = Invoice::where('status', 'paid')
-            ->whereBetween('paid_at', [$startDate, $endDate])
+            ->whereBetween('paid_date', [$startDate, $endDate])
             ->count();
         $totalInvoices = Invoice::whereBetween('created_at', [$startDate, $endDate])->count();
 
@@ -57,9 +57,9 @@ class ReportController extends Controller
             $month = Carbon::now()->subMonths($i);
             $revenueLabels[] = $month->format('M Y');
             $revenueData[] = Invoice::where('status', 'paid')
-                ->whereYear('paid_at', $month->year)
-                ->whereMonth('paid_at', $month->month)
-                ->sum('total');
+                ->whereYear('paid_date', $month->year)
+                ->whereMonth('paid_date', $month->month)
+                ->sum('amount');
         }
 
         // Chart Data - Customer Growth (last 6 months)
@@ -96,12 +96,12 @@ class ReportController extends Controller
         // Top Packages
         $topPackages = Package::withCount('customers')
             ->with(['customers.invoices' => function($q) use ($startDate, $endDate) {
-                $q->where('status', 'paid')->whereBetween('paid_at', [$startDate, $endDate]);
+                $q->where('status', 'paid')->whereBetween('paid_date', [$startDate, $endDate]);
             }])
             ->get()
             ->map(function($package) {
                 $package->revenue = $package->customers->sum(function($customer) {
-                    return $customer->invoices->sum('total');
+                    return $customer->invoices->sum('amount');
                 });
                 return $package;
             })
@@ -123,17 +123,15 @@ class ReportController extends Controller
             ->sortByDesc('total_collected')
             ->take(5);
 
-        // Agent Performance
-        $agentPerformance = Agent::all()->map(function($agent) use ($startDate, $endDate) {
-            $purchases = VoucherPurchase::where('agent_id', $agent->id)
-                ->whereBetween('created_at', [$startDate, $endDate]);
-            
-            $agent->vouchers_sold = $purchases->count();
-            $agent->revenue = $purchases->sum('amount');
-            $agent->commission = $purchases->sum('commission');
+        // Agent Performance - simplified since voucher_purchases doesn't have agent_id
+        $agentPerformance = Agent::all()->map(function($agent) {
+            // Set default values since we don't have agent-specific voucher tracking
+            $agent->vouchers_sold = 0;
+            $agent->revenue = 0;
+            $agent->commission = 0;
             
             return $agent;
-        })->sortByDesc('vouchers_sold');
+        });
 
         return view('admin.reports.index', compact(
             'totalRevenue', 'revenueGrowth', 'activeCustomers', 'customerGrowth',
@@ -167,7 +165,7 @@ class ReportController extends Controller
             // Summary
             fputcsv($file, ['RINGKASAN']);
             fputcsv($file, ['Total Pelanggan Aktif', Customer::where('status', 'active')->count()]);
-            fputcsv($file, ['Total Pendapatan', Invoice::where('status', 'paid')->sum('total')]);
+            fputcsv($file, ['Total Pendapatan', Invoice::where('status', 'paid')->sum('amount')]);
             fputcsv($file, ['Invoice Terbayar', Invoice::where('status', 'paid')->count()]);
             fputcsv($file, ['Invoice Belum Bayar', Invoice::where('status', 'unpaid')->count()]);
             fputcsv($file, []);

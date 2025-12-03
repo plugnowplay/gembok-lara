@@ -39,8 +39,19 @@ class CpeController extends Controller
         // Process devices to add status
         $processedDevices = collect($devices)->map(function ($device) {
             $lastInform = $device['_lastInform'] ?? null;
+            
+            // Handle different lastInform formats (timestamp or ISO date string)
+            $lastInformTimestamp = null;
+            if ($lastInform) {
+                if (is_numeric($lastInform)) {
+                    $lastInformTimestamp = (int) $lastInform;
+                } elseif (is_string($lastInform)) {
+                    $lastInformTimestamp = strtotime($lastInform) * 1000;
+                }
+            }
+            
             $now = time() * 1000;
-            $isOnline = $lastInform && ($now - $lastInform) < 300000; // 5 minutes
+            $isOnline = $lastInformTimestamp && ($now - $lastInformTimestamp) < 300000; // 5 minutes
 
             return [
                 'id' => $device['_id'] ?? 'Unknown',
@@ -49,7 +60,7 @@ class CpeController extends Controller
                 'manufacturer' => $this->getDeviceParam($device, 'InternetGatewayDevice.DeviceInfo.Manufacturer'),
                 'ip_address' => $this->getDeviceParam($device, 'InternetGatewayDevice.WANDevice.1.WANConnectionDevice.1.WANIPConnection.1.ExternalIPAddress'),
                 'status' => $isOnline ? 'online' : 'offline',
-                'last_inform' => $lastInform ? date('Y-m-d H:i:s', $lastInform / 1000) : 'Never',
+                'last_inform' => $lastInformTimestamp ? date('Y-m-d H:i:s', $lastInformTimestamp / 1000) : 'Never',
             ];
         });
 
@@ -208,6 +219,16 @@ class CpeController extends Controller
             }
         }
 
-        return is_array($value) && isset($value['_value']) ? $value['_value'] : $value;
+        // Extract _value if exists, otherwise return null for arrays
+        if (is_array($value)) {
+            if (isset($value['_value'])) {
+                $value = $value['_value'];
+            } else {
+                return null;
+            }
+        }
+
+        // Ensure we return a string or null
+        return is_scalar($value) ? (string) $value : null;
     }
 }

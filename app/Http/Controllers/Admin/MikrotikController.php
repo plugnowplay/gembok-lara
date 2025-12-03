@@ -17,10 +17,24 @@ class MikrotikController extends Controller
 
     public function index()
     {
-        if (!$this->mikrotik->isConnected()) {
+        $connected = $this->mikrotik->isConnected();
+        
+        if (!$connected) {
             return view('admin.mikrotik.index', [
                 'connected' => false,
-                'error' => 'Failed to connect to Mikrotik. Please check your configuration.'
+                'error' => 'Failed to connect to Mikrotik. Please check your configuration.',
+                'pppoeActive' => [],
+                'hotspotActive' => [],
+                'systemResource' => null,
+                'interfaces' => [],
+                'stats' => [
+                    'pppoe_online' => 0,
+                    'hotspot_online' => 0,
+                    'total_online' => 0,
+                    'cpu_load' => 0,
+                    'memory_usage' => 0,
+                    'uptime' => 'N/A',
+                ],
             ]);
         }
 
@@ -47,7 +61,7 @@ class MikrotikController extends Controller
             'systemResource',
             'interfaces',
             'stats'
-        ))->with('connected', true);
+        ));
     }
 
     public function pppoeActive()

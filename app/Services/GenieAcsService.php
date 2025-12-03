@@ -52,7 +52,13 @@ class GenieAcsService
 
     public function getDevice($deviceId)
     {
-        return $this->request('get', '/devices/' . urlencode($deviceId));
+        // GenieACS NBI requires query filter to get single device
+        $query = ['_id' => $deviceId];
+        $queryString = '?' . http_build_query(['query' => json_encode($query)]);
+        $devices = $this->request('get', '/devices' . $queryString);
+        
+        // Return first device or null
+        return $devices && count($devices) > 0 ? $devices[0] : null;
     }
 
     public function refreshDevice($deviceId)
@@ -94,7 +100,17 @@ class GenieAcsService
             }
         }
 
-        return is_array($value) && isset($value['_value']) ? $value['_value'] : $value;
+        // Extract _value if exists
+        if (is_array($value)) {
+            if (isset($value['_value'])) {
+                $value = $value['_value'];
+            } else {
+                return null;
+            }
+        }
+
+        // Ensure we return a scalar value or null
+        return is_scalar($value) ? $value : null;
     }
 
     // ==================== Remote Control ====================
@@ -195,9 +211,20 @@ class GenieAcsService
             return null;
         }
 
-        $lastInform = isset($device['_lastInform']) ? $device['_lastInform'] : null;
+        $lastInform = $device['_lastInform'] ?? null;
+        
+        // Handle different lastInform formats (timestamp or ISO date string)
+        $lastInformTimestamp = null;
+        if ($lastInform) {
+            if (is_numeric($lastInform)) {
+                $lastInformTimestamp = (int) $lastInform;
+            } elseif (is_string($lastInform)) {
+                $lastInformTimestamp = strtotime($lastInform) * 1000;
+            }
+        }
+        
         $now = time() * 1000; // Convert to milliseconds
-        $isOnline = $lastInform && ($now - $lastInform) < 300000; // 5 minutes
+        $isOnline = $lastInformTimestamp && ($now - $lastInformTimestamp) < 300000; // 5 minutes
 
         return [
             'device_id' => $deviceId,
@@ -209,7 +236,7 @@ class GenieAcsService
             'mac_address' => $this->getParameterValue($device, 'InternetGatewayDevice.LANDevice.1.LANEthernetInterfaceConfig.1.MACAddress'),
             'ip_address' => $this->getParameterValue($device, 'InternetGatewayDevice.WANDevice.1.WANConnectionDevice.1.WANIPConnection.1.ExternalIPAddress'),
             'uptime' => $this->getParameterValue($device, 'InternetGatewayDevice.DeviceInfo.UpTime'),
-            'last_inform' => $lastInform ? date('Y-m-d H:i:s', $lastInform / 1000) : null,
+            'last_inform' => $lastInformTimestamp ? date('Y-m-d H:i:s', $lastInformTimestamp / 1000) : null,
         ];
     }
 

@@ -3,25 +3,32 @@
 @section('title', 'Laporan')
 
 @section('content')
-<div class="space-y-6">
-    <!-- Header -->
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between">
-        <div>
-            <h1 class="text-2xl font-bold text-gray-800">Laporan & Analitik</h1>
-            <p class="text-gray-500">Ringkasan data bisnis ISP Anda</p>
-        </div>
-        <div class="mt-4 md:mt-0 flex space-x-3">
-            <select id="period" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent">
-                <option value="today">Hari Ini</option>
-                <option value="week">Minggu Ini</option>
-                <option value="month" selected>Bulan Ini</option>
-                <option value="year">Tahun Ini</option>
-            </select>
-            <button onclick="exportReport()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">
-                <i class="fas fa-file-excel mr-2"></i>Export
-            </button>
-        </div>
-    </div>
+<div class="min-h-screen bg-gray-100" x-data="{ sidebarOpen: false }">
+    @include('admin.partials.sidebar')
+
+    <div class="lg:pl-64">
+        @include('admin.partials.topbar')
+
+        <div class="p-6">
+            <div class="space-y-6">
+                <!-- Header -->
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-800">Laporan & Analitik</h1>
+                        <p class="text-gray-500">Ringkasan data bisnis ISP Anda</p>
+                    </div>
+                    <div class="mt-4 md:mt-0 flex space-x-3">
+                        <select id="period" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent">
+                            <option value="today">Hari Ini</option>
+                            <option value="week">Minggu Ini</option>
+                            <option value="month" selected>Bulan Ini</option>
+                            <option value="year">Tahun Ini</option>
+                        </select>
+                        <button onclick="exportReport()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">
+                            <i class="fas fa-file-excel mr-2"></i>Export
+                        </button>
+                    </div>
+                </div>
 
     <!-- Summary Cards -->
     <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -352,4 +359,8 @@ function exportReport() {
     window.location.href = `/admin/reports/export?period=${period}`;
 }
 </script>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection

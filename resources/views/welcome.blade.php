@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gembok Net - Internet Service Provider</title>
+    <title>Arsa Net - Internet Service Provider</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -16,7 +16,7 @@
                     <div class="w-10 h-10 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-lg flex items-center justify-center">
                         <i class="fas fa-wifi text-white"></i>
                     </div>
-                    <span class="text-xl font-bold text-white">Gembok Net</span>
+                    <span class="text-xl font-bold text-white">Arsa Net</span>
                 </div>
                 <div class="hidden md:flex items-center space-x-6">
                     <a href="#packages" class="text-gray-300 hover:text-cyan-400 transition">Paket</a>
@@ -109,53 +109,24 @@
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <!-- Basic Package -->
-                <div class="bg-slate-800 rounded-2xl overflow-hidden border border-slate-700 hover:border-cyan-500/50 transition">
-                    <div class="p-8">
-                        <h3 class="text-xl font-semibold text-white mb-2">Basic</h3>
-                        <p class="text-gray-400 mb-4">Untuk penggunaan ringan</p>
-                        <div class="mb-6">
-                            <span class="text-4xl font-bold text-white">Rp 150K</span>
-                            <span class="text-gray-400">/bulan</span>
-                        </div>
-                        <ul class="space-y-3 mb-8">
-                            <li class="flex items-center text-gray-300">
-                                <i class="fas fa-check text-cyan-400 mr-3"></i>10 Mbps Download
-                            </li>
-                            <li class="flex items-center text-gray-300">
-                                <i class="fas fa-check text-cyan-400 mr-3"></i>5 Mbps Upload
-                            </li>
-                            <li class="flex items-center text-gray-300">
-                                <i class="fas fa-check text-cyan-400 mr-3"></i>Unlimited Quota
-                            </li>
-                            <li class="flex items-center text-gray-300">
-                                <i class="fas fa-check text-cyan-400 mr-3"></i>Free Installation
-                            </li>
-                        </ul>
-                        <a href="https://wa.me/6281234567890?text=Saya%20tertarik%20paket%20Basic" class="block w-full bg-slate-700 text-white py-3 rounded-lg text-center font-semibold hover:bg-slate-600 transition">
-                            Pilih Paket
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Standard Package (Popular) -->
-                <div class="bg-gradient-to-b from-cyan-900/50 to-slate-800 rounded-2xl overflow-hidden border-2 border-cyan-500 relative transform scale-105">
+                @forelse($packages ?? [] as $index => $package)
+                @php $isPopular = $index === 1; @endphp
+                <div class="{{ $isPopular ? 'bg-gradient-to-b from-cyan-900/50 to-slate-800 border-2 border-cyan-500 transform md:scale-105' : 'bg-slate-800 border border-slate-700 hover:border-cyan-500/50' }} rounded-2xl overflow-hidden relative transition">
+                    @if($isPopular)
                     <div class="absolute top-0 left-0 right-0 bg-cyan-500 text-white text-center py-2 text-sm font-semibold">
                         PALING POPULER
                     </div>
-                    <div class="p-8 pt-12">
-                        <h3 class="text-xl font-semibold text-white mb-2">Standard</h3>
-                        <p class="text-gray-400 mb-4">Untuk keluarga</p>
+                    @endif
+                    <div class="p-8 {{ $isPopular ? 'pt-12' : '' }}">
+                        <h3 class="text-xl font-semibold text-white mb-2">{{ $package->name }}</h3>
+                        <p class="text-gray-400 mb-4">{{ $package->description ?? 'Internet cepat & stabil' }}</p>
                         <div class="mb-6">
-                            <span class="text-4xl font-bold text-white">Rp 250K</span>
+                            <span class="text-4xl font-bold text-white">Rp {{ number_format($package->price / 1000, 0) }}K</span>
                             <span class="text-gray-400">/bulan</span>
                         </div>
                         <ul class="space-y-3 mb-8">
                             <li class="flex items-center text-gray-300">
-                                <i class="fas fa-check text-cyan-400 mr-3"></i>30 Mbps Download
-                            </li>
-                            <li class="flex items-center text-gray-300">
-                                <i class="fas fa-check text-cyan-400 mr-3"></i>15 Mbps Upload
+                                <i class="fas fa-check text-cyan-400 mr-3"></i>{{ $package->speed }}
                             </li>
                             <li class="flex items-center text-gray-300">
                                 <i class="fas fa-check text-cyan-400 mr-3"></i>Unlimited Quota
@@ -164,49 +135,31 @@
                                 <i class="fas fa-check text-cyan-400 mr-3"></i>Free Installation
                             </li>
                             <li class="flex items-center text-gray-300">
-                                <i class="fas fa-check text-cyan-400 mr-3"></i>Free Router WiFi
+                                <i class="fas fa-check text-cyan-400 mr-3"></i>24/7 Support
                             </li>
                         </ul>
-                        <a href="https://wa.me/6281234567890?text=Saya%20tertarik%20paket%20Standard" class="block w-full bg-gradient-to-r from-cyan-500 to-blue-600 text-white py-3 rounded-lg text-center font-semibold hover:from-cyan-600 hover:to-blue-700 transition">
-                            Pilih Paket
+                        <a href="{{ route('order.create', $package) }}" class="block w-full {{ $isPopular ? 'bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700' : 'bg-slate-700 hover:bg-slate-600' }} text-white py-3 rounded-lg text-center font-semibold transition">
+                            <i class="fas fa-shopping-cart mr-2"></i>Pilih Paket
                         </a>
                     </div>
                 </div>
-
-                <!-- Premium Package -->
-                <div class="bg-slate-800 rounded-2xl overflow-hidden border border-slate-700 hover:border-cyan-500/50 transition">
-                    <div class="p-8">
-                        <h3 class="text-xl font-semibold text-white mb-2">Premium</h3>
-                        <p class="text-gray-400 mb-4">Untuk bisnis & gaming</p>
-                        <div class="mb-6">
-                            <span class="text-4xl font-bold text-white">Rp 400K</span>
-                            <span class="text-gray-400">/bulan</span>
-                        </div>
-                        <ul class="space-y-3 mb-8">
-                            <li class="flex items-center text-gray-300">
-                                <i class="fas fa-check text-cyan-400 mr-3"></i>100 Mbps Download
-                            </li>
-                            <li class="flex items-center text-gray-300">
-                                <i class="fas fa-check text-cyan-400 mr-3"></i>50 Mbps Upload
-                            </li>
-                            <li class="flex items-center text-gray-300">
-                                <i class="fas fa-check text-cyan-400 mr-3"></i>Unlimited Quota
-                            </li>
-                            <li class="flex items-center text-gray-300">
-                                <i class="fas fa-check text-cyan-400 mr-3"></i>Free Installation
-                            </li>
-                            <li class="flex items-center text-gray-300">
-                                <i class="fas fa-check text-cyan-400 mr-3"></i>Free Router WiFi
-                            </li>
-                            <li class="flex items-center text-gray-300">
-                                <i class="fas fa-check text-cyan-400 mr-3"></i>Priority Support
-                            </li>
-                        </ul>
-                        <a href="https://wa.me/6281234567890?text=Saya%20tertarik%20paket%20Premium" class="block w-full bg-slate-700 text-white py-3 rounded-lg text-center font-semibold hover:bg-slate-600 transition">
-                            Pilih Paket
-                        </a>
-                    </div>
+                @empty
+                <!-- Fallback jika tidak ada paket di database -->
+                <div class="col-span-3 text-center py-12">
+                    <p class="text-gray-400">Paket belum tersedia. Hubungi kami untuk informasi lebih lanjut.</p>
+                    <a href="https://wa.me/6281234567890" class="inline-block mt-4 bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition">
+                        <i class="fab fa-whatsapp mr-2"></i>Hubungi via WhatsApp
+                    </a>
                 </div>
+                @endforelse
+            </div>
+            
+            <!-- Track Order Link -->
+            <div class="text-center mt-12">
+                <p class="text-gray-400 mb-2">Sudah pesan? Lacak status pesanan Anda</p>
+                <a href="{{ route('order.track') }}" class="text-cyan-400 hover:text-cyan-300 transition">
+                    <i class="fas fa-search mr-1"></i>Lacak Pesanan
+                </a>
             </div>
         </div>
     </section>
@@ -236,12 +189,12 @@
                     <p class="text-gray-400">0812-3456-7890</p>
                 </a>
                 
-                <a href="mailto:info@gembok.net" class="bg-slate-700/50 rounded-2xl p-8 text-center hover:bg-slate-700 transition">
+                <a href="mailto:info@arsa.net" class="bg-slate-700/50 rounded-2xl p-8 text-center hover:bg-slate-700 transition">
                     <div class="w-16 h-16 bg-purple-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
                         <i class="fas fa-envelope text-purple-400 text-3xl"></i>
                     </div>
                     <h3 class="text-lg font-semibold text-white mb-2">Email</h3>
-                    <p class="text-gray-400">info@gembok.net</p>
+                    <p class="text-gray-400">info@arsa.net</p>
                 </a>
             </div>
         </div>
@@ -256,7 +209,7 @@
                         <div class="w-10 h-10 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-lg flex items-center justify-center">
                             <i class="fas fa-wifi text-white"></i>
                         </div>
-                        <span class="text-xl font-bold text-white">Gembok Net</span>
+                        <span class="text-xl font-bold text-white">Arsa Net</span>
                     </div>
                     <p class="text-gray-400 text-sm">Internet Service Provider terpercaya untuk rumah dan bisnis Anda.</p>
                 </div>
@@ -296,7 +249,7 @@
             </div>
             
             <div class="border-t border-slate-800 mt-8 pt-8 text-center text-gray-500 text-sm">
-                <p>&copy; {{ date('Y') }} Gembok Net. All rights reserved. Powered by Gembok Lara</p>
+                <p>&copy; {{ date('Y') }} Arsa Net. All rights reserved.</p>
             </div>
         </div>
     </footer>

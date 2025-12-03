@@ -39,6 +39,20 @@ class PackageController extends Controller
             ->with('success', 'Package created successfully!');
     }
 
+    public function show(\App\Models\Package $package)
+    {
+        $package->loadCount('customers');
+        $customers = $package->customers()->latest()->take(10)->get();
+        
+        $stats = [
+            'total_customers' => $package->customers()->count(),
+            'active_customers' => $package->customers()->where('status', 'active')->count(),
+            'monthly_revenue' => $package->customers()->where('status', 'active')->count() * $package->price,
+        ];
+        
+        return view('admin.packages.show', compact('package', 'customers', 'stats'));
+    }
+
     public function edit(\App\Models\Package $package)
     {
         return view('admin.packages.edit', compact('package'));
