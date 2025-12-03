@@ -93,6 +93,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/settings', [SettingController::class, 'index'])->name('settings');
         Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
         
+        // Change Password
+        Route::get('/change-password', [DashboardController::class, 'changePassword'])->name('change-password');
+        Route::post('/change-password', [DashboardController::class, 'updatePassword'])->name('change-password.update');
+        
         // Mikrotik Management
         Route::prefix('mikrotik')->name('mikrotik.')->group(function () {
             Route::get('/', [\App\Http\Controllers\Admin\MikrotikController::class, 'index'])->name('index');
