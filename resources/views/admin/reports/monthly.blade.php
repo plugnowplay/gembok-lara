@@ -1,9 +1,16 @@
-@extends('layouts.admin')
+@extends('layouts.app')
 
 @section('title', 'Laporan Bulanan')
 
 @section('content')
-<div class="space-y-6">
+<div class="min-h-screen bg-gray-100" x-data="{ sidebarOpen: false }">
+    @include('admin.partials.sidebar')
+
+    <div class="lg:pl-64">
+        @include('admin.partials.topbar')
+
+        <div class="p-6">
+            <div class="space-y-6">
     <!-- Header -->
     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
@@ -98,42 +105,44 @@
                 </tbody>
             </table>
         </div>
+            </div>
+        </div>
     </div>
 </div>
 
-@push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-const dailyData = @json($dailyRevenue);
-new Chart(document.getElementById('dailyRevenueChart'), {
-    type: 'bar',
-    data: {
-        labels: dailyData.map(d => d.date),
-        datasets: [{
-            label: 'Pendapatan (Rp)',
-            data: dailyData.map(d => d.revenue),
-            backgroundColor: 'rgba(59, 130, 246, 0.5)',
-            borderColor: 'rgb(59, 130, 246)',
-            borderWidth: 1
-        }]
-    },
-    options: {
-        responsive: true,
-        plugins: {
-            legend: { display: false }
+document.addEventListener('DOMContentLoaded', function() {
+    const dailyData = @json($dailyRevenue);
+    new Chart(document.getElementById('dailyRevenueChart'), {
+        type: 'bar',
+        data: {
+            labels: dailyData.map(d => d.date),
+            datasets: [{
+                label: 'Pendapatan (Rp)',
+                data: dailyData.map(d => d.revenue),
+                backgroundColor: 'rgba(59, 130, 246, 0.5)',
+                borderColor: 'rgb(59, 130, 246)',
+                borderWidth: 1
+            }]
         },
-        scales: {
-            y: {
-                beginAtZero: true,
-                ticks: {
-                    callback: function(value) {
-                        return 'Rp ' + value.toLocaleString('id-ID');
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return 'Rp ' + value.toLocaleString('id-ID');
+                        }
                     }
                 }
             }
         }
-    }
+    });
 });
 </script>
-@endpush
 @endsection
