@@ -77,4 +77,58 @@ return [
         'default_gateway' => env('PAYMENT_DEFAULT_GATEWAY', 'midtrans'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | RADIUS Server Integration
+    |--------------------------------------------------------------------------
+    */
+    'radius' => [
+        'enabled' => env('RADIUS_ENABLED', false),
+        'host' => env('RADIUS_DB_HOST', '127.0.0.1'),
+        'port' => env('RADIUS_DB_PORT', 3306),
+        'database' => env('RADIUS_DB_DATABASE', 'radius'),
+        'username' => env('RADIUS_DB_USERNAME', 'radius'),
+        'password' => env('RADIUS_DB_PASSWORD', ''),
+        'nas_secret' => env('RADIUS_NAS_SECRET', 'testing123'),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | SNMP Network Monitoring
+    |--------------------------------------------------------------------------
+    */
+    'snmp' => [
+        'enabled' => env('SNMP_ENABLED', false),
+        'community' => env('SNMP_COMMUNITY', 'public'),
+        'version' => env('SNMP_VERSION', '2c'),
+        'timeout' => env('SNMP_TIMEOUT', 5),
+        'retries' => env('SNMP_RETRIES', 2),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | CRM Integration
+    |--------------------------------------------------------------------------
+    */
+    'crm' => [
+        'enabled' => env('CRM_ENABLED', false),
+        'provider' => env('CRM_PROVIDER', 'hubspot'), // hubspot, salesforce, zoho
+        'api_key' => env('CRM_API_KEY', ''),
+        'api_url' => env('CRM_API_URL', ''),
+        'webhook_secret' => env('CRM_WEBHOOK_SECRET', ''),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Accounting Integration
+    |--------------------------------------------------------------------------
+    */
+    'accounting' => [
+        'enabled' => env('ACCOUNTING_ENABLED', false),
+        'provider' => env('ACCOUNTING_PROVIDER', 'accurate'), // accurate, jurnal, zahir
+        'api_key' => env('ACCOUNTING_API_KEY', ''),
+        'api_url' => env('ACCOUNTING_API_URL', ''),
+        'company_id' => env('ACCOUNTING_COMPANY_ID', ''),
+    ],
+
 ];

@@ -702,3 +702,260 @@ curl http://localhost:7557/devices
 ---
 
 **Need Help?** Open an issue di [GitHub Issues](https://github.com/rizkylab/gembok-lara/issues)
+
+
+---
+
+## 🔐 RADIUS Server Integration
+
+### Overview
+Integrasi dengan FreeRADIUS untuk autentikasi PPPoE sebagai alternatif atau complement dari Mikrotik.
+
+### Prerequisites
+- FreeRADIUS Server v3.x
+- MySQL/MariaDB untuk RADIUS database
+- PHP RADIUS extension (optional untuk CoA)
+
+### Installation FreeRADIUS
+
+```bash
+# Ubuntu/Debian
+sudo apt install freeradius freeradius-mysql freeradius-utils
+
+# Enable MySQL module
+cd /etc/freeradius/3.0/mods-enabled
+sudo ln -s ../mods-available/sql sql
+
+# Configure SQL module
+sudo nano /etc/freeradius/3.0/mods-available/sql
+```
+
+### Configuration in GEMBOK LARA
+
+Edit `.env`:
+```env
+RADIUS_ENABLED=true
+RADIUS_DB_HOST=127.0.0.1
+RADIUS_DB_PORT=3306
+RADIUS_DB_DATABASE=radius
+RADIUS_DB_USERNAME=radius
+RADIUS_DB_PASSWORD=your_password
+RADIUS_NAS_SECRET=testing123
+```
+
+### Features
+
+#### User Management
+```php
+// Create user
+$radius->createUser($username, $password, ['Framed-IP-Address' => '10.10.10.100']);
+
+// Update password
+$radius->updatePassword($username, $newPassword);
+
+// Delete user
+$radius->deleteUser($username);
+
+// Suspend user
+$radius->suspendUser($username);
+
+// Unsuspend user
+$radius->unsuspendUser($username);
+```
+
+#### Group/Profile Management
+```php
+// Create bandwidth profile
+$radius->createGroup('10Mbps', '10M', '5M');
+
+// Assign user to group
+$radius->assignGroup($username, '10Mbps');
+```
+
+#### Monitoring
+```php
+// Get online users
+$onlineUsers = $radius->getOnlineUsers();
+
+// Get user history
+$history = $radius->getUserHistory($username);
+
+// Disconnect user (CoA)
+$radius->disconnectUser($username);
+```
+
+### Admin Dashboard
+
+Access: `/admin/radius`
+
+Features:
+- Online users monitoring
+- User management (create/delete/suspend)
+- Group/Profile management
+- Session history
+
+---
+
+## 📊 SNMP Network Monitoring
+
+### Overview
+Monitor perangkat jaringan (router, switch, OLT, server) secara real-time menggunakan SNMP.
+
+### Prerequisites
+- PHP SNMP extension (`php-snmp`)
+- SNMP enabled pada perangkat yang dimonitor
+
+### Configuration
+
+Edit `.env`:
+```env
+SNMP_ENABLED=true
+SNMP_COMMUNITY=public
+SNMP_VERSION=2c
+SNMP_TIMEOUT=5
+SNMP_RETRIES=2
+```
+
+### Features
+
+#### System Information
+```php
+$snmp->getSystemInfo($host);
+// Returns: description, uptime, name
+```
+
+#### Interface Statistics
+```php
+$snmp->getInterfaces($host);
+// Returns: name, speed, status, in_octets, out_octets
+```
+
+#### Traffic Monitoring
+```php
+$snmp->getTrafficStats($host, $ifIndex);
+// Returns: in_bps, out_bps, in_bytes, out_bytes
+```
+
+#### Resource Usage
+```php
+$snmp->getResourceUsage($host);
+// Returns: cpu_usage, memory_total, memory_free, memory_percent
+```
+
+### Admin Dashboard
+
+Access: `/admin/snmp`
+
+Features:
+- Device management (add/remove)
+- Real-time status dashboard
+- Interface statistics
+- Traffic graphs
+- Resource monitoring
+
+---
+
+## 👥 CRM Integration
+
+### Overview
+Integrasi dengan sistem CRM eksternal untuk customer relationship management.
+
+### Supported Providers
+- HubSpot
+- Salesforce
+- Zoho CRM
+
+### Configuration
+
+Edit `.env`:
+```env
+CRM_ENABLED=true
+CRM_PROVIDER=hubspot
+CRM_API_KEY=your_api_key
+CRM_API_URL=https://api.hubapi.com
+CRM_WEBHOOK_SECRET=your_webhook_secret
+```
+
+### Features
+
+#### Contact Sync
+```php
+$crm->syncCustomer($customer);
+// Syncs customer data to CRM as contact
+```
+
+#### Deal Creation
+```php
+$crm->createDeal($customer, $package, $amount);
+// Creates deal/opportunity in CRM
+```
+
+#### Activity Logging
+```php
+$crm->logActivity($customerId, 'payment', 'Customer paid invoice INV-001');
+```
+
+### Admin Dashboard
+
+Access: `/admin/integration/crm`
+
+Features:
+- Connection status
+- Manual sync
+- Bulk sync
+- Test connection
+
+---
+
+## 💰 Accounting Integration
+
+### Overview
+Integrasi dengan software akuntansi untuk sinkronisasi invoice dan pembayaran.
+
+### Supported Providers
+- Accurate Online
+- Jurnal.id (Mekari)
+- Zahir
+
+### Configuration
+
+Edit `.env`:
+```env
+ACCOUNTING_ENABLED=true
+ACCOUNTING_PROVIDER=accurate
+ACCOUNTING_API_KEY=your_api_key
+ACCOUNTING_API_URL=https://api.accurate.id
+ACCOUNTING_COMPANY_ID=your_company_id
+```
+
+### Features
+
+#### Customer Sync
+```php
+$accounting->syncCustomer($customer);
+```
+
+#### Invoice Sync
+```php
+$accounting->createInvoice($invoice);
+```
+
+#### Payment Recording
+```php
+$accounting->recordPayment($payment);
+```
+
+### Admin Dashboard
+
+Access: `/admin/integration/accounting`
+
+Features:
+- Connection status
+- Invoice sync
+- Payment sync
+- Bulk operations
+- Test connection
+
+---
+
+**Last Updated**: December 4, 2025

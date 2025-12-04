@@ -95,6 +95,18 @@
             <span class="ml-auto text-xs px-2 py-0.5 bg-cyan-500/30 text-cyan-300 rounded">PPPoE</span>
         </a>
         
+        <a href="{{ route('admin.radius.index') }}" class="flex items-center px-4 py-2.5 text-gray-300 hover:bg-white hover:bg-opacity-10 rounded-lg transition {{ request()->routeIs('admin.radius.*') ? 'bg-white bg-opacity-20 text-white' : '' }}">
+            <i class="fas fa-shield-alt w-5 mr-3"></i>
+            <span>RADIUS</span>
+            <span class="ml-auto text-xs px-2 py-0.5 bg-purple-500/30 text-purple-300 rounded">Auth</span>
+        </a>
+        
+        <a href="{{ route('admin.snmp.index') }}" class="flex items-center px-4 py-2.5 text-gray-300 hover:bg-white hover:bg-opacity-10 rounded-lg transition {{ request()->routeIs('admin.snmp.*') ? 'bg-white bg-opacity-20 text-white' : '' }}">
+            <i class="fas fa-chart-line w-5 mr-3"></i>
+            <span>SNMP Monitor</span>
+            <span class="ml-auto text-xs px-2 py-0.5 bg-orange-500/30 text-orange-300 rounded">Live</span>
+        </a>
+        
         <a href="{{ route('admin.cpe.index') }}" class="flex items-center px-4 py-2.5 text-gray-300 hover:bg-white hover:bg-opacity-10 rounded-lg transition {{ request()->routeIs('admin.cpe.*') ? 'bg-white bg-opacity-20 text-white' : '' }}">
             <i class="fas fa-router w-5 mr-3"></i>
             <span>CPE / ONU</span>
@@ -111,6 +123,18 @@
             <i class="fas fa-credit-card w-5 mr-3"></i>
             <span>Payment</span>
             <span class="ml-auto text-xs px-2 py-0.5 bg-yellow-500/30 text-yellow-300 rounded">Gateway</span>
+        </a>
+        
+        <a href="{{ route('admin.integration.crm') }}" class="flex items-center px-4 py-2.5 text-gray-300 hover:bg-white hover:bg-opacity-10 rounded-lg transition {{ request()->routeIs('admin.integration.crm*') ? 'bg-white bg-opacity-20 text-white' : '' }}">
+            <i class="fas fa-users-cog w-5 mr-3"></i>
+            <span>CRM</span>
+            <span class="ml-auto text-xs px-2 py-0.5 bg-pink-500/30 text-pink-300 rounded">Sync</span>
+        </a>
+        
+        <a href="{{ route('admin.integration.accounting') }}" class="flex items-center px-4 py-2.5 text-gray-300 hover:bg-white hover:bg-opacity-10 rounded-lg transition {{ request()->routeIs('admin.integration.accounting*') ? 'bg-white bg-opacity-20 text-white' : '' }}">
+            <i class="fas fa-calculator w-5 mr-3"></i>
+            <span>Accounting</span>
+            <span class="ml-auto text-xs px-2 py-0.5 bg-emerald-500/30 text-emerald-300 rounded">Sync</span>
         </a>
         
         <!-- Settings -->

@@ -166,6 +166,45 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('/export', [\App\Http\Controllers\Admin\ReportController::class, 'export'])->name('export');
         });
         
+        // RADIUS Management
+        Route::prefix('radius')->name('radius.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Admin\RadiusController::class, 'index'])->name('index');
+            Route::get('/users', [\App\Http\Controllers\Admin\RadiusController::class, 'users'])->name('users');
+            Route::post('/users', [\App\Http\Controllers\Admin\RadiusController::class, 'storeUser'])->name('users.store');
+            Route::delete('/users', [\App\Http\Controllers\Admin\RadiusController::class, 'deleteUser'])->name('users.delete');
+            Route::get('/groups', [\App\Http\Controllers\Admin\RadiusController::class, 'groups'])->name('groups');
+            Route::post('/groups', [\App\Http\Controllers\Admin\RadiusController::class, 'storeGroup'])->name('groups.store');
+            Route::post('/disconnect', [\App\Http\Controllers\Admin\RadiusController::class, 'disconnect'])->name('disconnect');
+            Route::post('/suspend', [\App\Http\Controllers\Admin\RadiusController::class, 'suspend'])->name('suspend');
+            Route::post('/unsuspend', [\App\Http\Controllers\Admin\RadiusController::class, 'unsuspend'])->name('unsuspend');
+            Route::get('/history/{username}', [\App\Http\Controllers\Admin\RadiusController::class, 'history'])->name('history');
+        });
+        
+        // SNMP Network Monitoring
+        Route::prefix('snmp')->name('snmp.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Admin\SnmpController::class, 'index'])->name('index');
+            Route::get('/dashboard', [\App\Http\Controllers\Admin\SnmpController::class, 'dashboard'])->name('dashboard');
+            Route::get('/device/{host}', [\App\Http\Controllers\Admin\SnmpController::class, 'device'])->name('device');
+            Route::get('/traffic', [\App\Http\Controllers\Admin\SnmpController::class, 'traffic'])->name('traffic');
+            Route::get('/ping', [\App\Http\Controllers\Admin\SnmpController::class, 'ping'])->name('ping');
+            Route::post('/devices', [\App\Http\Controllers\Admin\SnmpController::class, 'storeDevice'])->name('devices.store');
+            Route::delete('/devices/{id}', [\App\Http\Controllers\Admin\SnmpController::class, 'deleteDevice'])->name('devices.delete');
+        });
+        
+        // CRM & Accounting Integration
+        Route::prefix('integration')->name('integration.')->group(function () {
+            Route::get('/crm', [\App\Http\Controllers\Admin\IntegrationController::class, 'crm'])->name('crm');
+            Route::get('/accounting', [\App\Http\Controllers\Admin\IntegrationController::class, 'accounting'])->name('accounting');
+            Route::post('/crm/sync-customer', [\App\Http\Controllers\Admin\IntegrationController::class, 'syncCustomerToCrm'])->name('crm.sync-customer');
+            Route::post('/crm/bulk-sync', [\App\Http\Controllers\Admin\IntegrationController::class, 'bulkSyncCrm'])->name('crm.bulk-sync');
+            Route::post('/crm/test', [\App\Http\Controllers\Admin\IntegrationController::class, 'testCrmConnection'])->name('crm.test');
+            Route::post('/accounting/sync-customer', [\App\Http\Controllers\Admin\IntegrationController::class, 'syncCustomerToAccounting'])->name('accounting.sync-customer');
+            Route::post('/accounting/sync-invoice', [\App\Http\Controllers\Admin\IntegrationController::class, 'syncInvoiceToAccounting'])->name('accounting.sync-invoice');
+            Route::post('/accounting/sync-payment', [\App\Http\Controllers\Admin\IntegrationController::class, 'syncPaymentToAccounting'])->name('accounting.sync-payment');
+            Route::post('/accounting/bulk-sync', [\App\Http\Controllers\Admin\IntegrationController::class, 'bulkSyncAccounting'])->name('accounting.bulk-sync');
+            Route::post('/accounting/test', [\App\Http\Controllers\Admin\IntegrationController::class, 'testAccountingConnection'])->name('accounting.test');
+        });
+        
         // Orders Management
         Route::prefix('orders')->name('orders.')->group(function () {
             Route::get('/', [\App\Http\Controllers\Admin\OrderController::class, 'index'])->name('index');
