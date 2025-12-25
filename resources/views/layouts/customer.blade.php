@@ -83,7 +83,7 @@
                     <i class="fas fa-bars text-xl"></i>
                 </button>
                 <div class="flex items-center space-x-4">
-                    <span class="text-gray-600">{{ Auth::user()->name ?? 'Customer' }}</span>
+                    <span class="text-gray-600">{{ $customer->name ?? 'Customer' }}</span>
                     <div class="w-10 h-10 bg-cyan-100 rounded-full flex items-center justify-center">
                         <i class="fas fa-user text-cyan-600"></i>
                     </div>

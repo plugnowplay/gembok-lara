@@ -79,13 +79,21 @@
             
             <div class="mb-4">
                 <label class="block text-gray-700 text-sm font-medium mb-2">Subjek</label>
-                <select name="subject" required
+                <input type="text" name="subject" required
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+                    placeholder="Masukkan subjek tiket">
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-medium mb-2">Kategori</label>
+                <select name="category" required
                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent">
-                    <option value="">Pilih subjek</option>
+                    <option value="">Pilih kategori</option>
                     <option value="billing">Masalah Tagihan</option>
-                    <option value="connection">Masalah Koneksi</option>
-                    <option value="speed">Kecepatan Lambat</option>
-                    <option value="upgrade">Upgrade Paket</option>
+                    <option value="technical">Masalah Teknis</option>
+                    <option value="installation">Instalasi</option>
+                    <option value="complaint">Keluhan</option>
+                    <option value="inquiry">Pertanyaan</option>
                     <option value="other">Lainnya</option>
                 </select>
             </div>

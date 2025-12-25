@@ -325,20 +325,20 @@ Route::prefix('customer')->name('customer.')->group(function () {
     })->name('login');
     Route::post('/login', [\App\Http\Controllers\Portal\CustomerController::class, 'login'])->name('login.post');
     
-    Route::middleware(['auth'])->group(function () {
-        Route::get('/dashboard', [\App\Http\Controllers\Portal\CustomerController::class, 'dashboard'])->name('dashboard');
-        Route::post('/logout', [\App\Http\Controllers\Portal\CustomerController::class, 'logout'])->name('logout');
-        Route::get('/invoices', [\App\Http\Controllers\Portal\CustomerController::class, 'invoices'])->name('invoices');
-        Route::get('/invoices/{invoice}', [\App\Http\Controllers\Portal\CustomerController::class, 'showInvoice'])->name('invoices.show');
-        Route::get('/payments', [\App\Http\Controllers\Portal\CustomerController::class, 'payments'])->name('payments');
-        Route::post('/pay/{invoice}', [\App\Http\Controllers\Portal\CustomerController::class, 'pay'])->name('pay');
-        Route::get('/profile', [\App\Http\Controllers\Portal\CustomerController::class, 'profile'])->name('profile');
-        Route::post('/profile', [\App\Http\Controllers\Portal\CustomerController::class, 'updateProfile'])->name('profile.update');
-        Route::get('/support', [\App\Http\Controllers\Portal\CustomerController::class, 'support'])->name('support');
-        Route::post('/support', [\App\Http\Controllers\Portal\CustomerController::class, 'submitTicket'])->name('support.submit');
-        Route::get('/tickets', [\App\Http\Controllers\Portal\CustomerController::class, 'tickets'])->name('tickets');
-        Route::get('/usage', [\App\Http\Controllers\Portal\CustomerController::class, 'usage'])->name('usage');
-    });
+    // No auth middleware - customer uses session-based auth handled in controller
+    Route::get('/dashboard', [\App\Http\Controllers\Portal\CustomerController::class, 'dashboard'])->name('dashboard');
+    Route::post('/logout', [\App\Http\Controllers\Portal\CustomerController::class, 'logout'])->name('logout');
+    Route::get('/logout', [\App\Http\Controllers\Portal\CustomerController::class, 'logout'])->name('logout.get');
+    Route::get('/invoices', [\App\Http\Controllers\Portal\CustomerController::class, 'invoices'])->name('invoices');
+    Route::get('/invoices/{invoice}', [\App\Http\Controllers\Portal\CustomerController::class, 'showInvoice'])->name('invoices.show');
+    Route::get('/payments', [\App\Http\Controllers\Portal\CustomerController::class, 'payments'])->name('payments');
+    Route::post('/pay/{invoice}', [\App\Http\Controllers\Portal\CustomerController::class, 'pay'])->name('pay');
+    Route::get('/profile', [\App\Http\Controllers\Portal\CustomerController::class, 'profile'])->name('profile');
+    Route::post('/profile', [\App\Http\Controllers\Portal\CustomerController::class, 'updateProfile'])->name('profile.update');
+    Route::get('/support', [\App\Http\Controllers\Portal\CustomerController::class, 'support'])->name('support');
+    Route::post('/support', [\App\Http\Controllers\Portal\CustomerController::class, 'submitTicket'])->name('support.submit');
+    Route::get('/tickets', [\App\Http\Controllers\Portal\CustomerController::class, 'tickets'])->name('tickets');
+    Route::get('/usage', [\App\Http\Controllers\Portal\CustomerController::class, 'usage'])->name('usage');
 });
 
 // Public Voucher Purchase

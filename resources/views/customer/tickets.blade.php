@@ -39,7 +39,7 @@
                             </span>
                         </div>
                         <h3 class="font-semibold text-gray-800">{{ $ticket->subject }}</h3>
-                        <p class="text-sm text-gray-500 mt-1">{{ Str::limit($ticket->message, 100) }}</p>
+                        <p class="text-sm text-gray-500 mt-1">{{ Str::limit($ticket->description, 100) }}</p>
                     </div>
                     <div class="text-right text-sm text-gray-500">
                         {{ $ticket->created_at->format('d M Y') }}
@@ -63,7 +63,7 @@
 <div id="createTicketModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <div class="bg-white rounded-xl p-6 w-full max-w-lg mx-4">
         <h3 class="text-lg font-bold mb-4">Buat Tiket Baru</h3>
-        <form action="{{ route('customer.tickets.store') }}" method="POST">
+        <form action="{{ route('customer.support.submit') }}" method="POST">
             @csrf
             <div class="space-y-4">
                 <div>
@@ -76,8 +76,10 @@
                         <select name="category" required class="w-full rounded-lg border-gray-300 shadow-sm">
                             <option value="technical">Teknis</option>
                             <option value="billing">Tagihan</option>
-                            <option value="general">Umum</option>
+                            <option value="installation">Instalasi</option>
                             <option value="complaint">Keluhan</option>
+                            <option value="inquiry">Pertanyaan</option>
+                            <option value="other">Lainnya</option>
                         </select>
                     </div>
                     <div>

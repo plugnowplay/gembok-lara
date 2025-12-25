@@ -3,73 +3,101 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Customer Portal - Login</title>
+    <title>Login Customer - GEMBOK LARA</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="bg-gradient-to-br from-slate-900 via-cyan-900 to-slate-900 min-h-screen flex items-center justify-center p-4">
+<body class="bg-gradient-to-br from-blue-600 to-indigo-800 min-h-screen flex items-center justify-center p-4">
     <div class="w-full max-w-md">
-        <!-- Logo & Title -->
-        <div class="text-center mb-8">
-            <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-2xl shadow-lg mb-4">
-                <i class="fas fa-user text-white text-3xl"></i>
+        <div class="bg-white rounded-2xl shadow-2xl p-8">
+            <div class="text-center mb-8">
+                <div class="w-20 h-20 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-user text-white text-3xl"></i>
+                </div>
+                <h1 class="text-2xl font-bold text-gray-800">Portal Pelanggan</h1>
+                <p class="text-gray-500 mt-1">GEMBOK LARA</p>
             </div>
-            <h1 class="text-3xl font-bold text-white">Customer Portal</h1>
-            <p class="text-cyan-300 mt-2">Kelola layanan internet Anda</p>
-        </div>
 
-        <!-- Login Form -->
-        <div class="bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl p-8 border border-white/20">
             @if(session('error'))
-                <div class="bg-red-500/20 border border-red-500 text-red-200 px-4 py-3 rounded-lg mb-6">
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6">
+                    <i class="fas fa-exclamation-circle mr-2"></i>
                     {{ session('error') }}
                 </div>
             @endif
 
             <form action="{{ route('customer.login.post') }}" method="POST">
                 @csrf
-                <div class="mb-6">
-                    <label class="block text-cyan-200 text-sm font-medium mb-2">
-                        <i class="fas fa-user mr-2"></i>Username / ID Pelanggan
+                <div class="mb-5">
+                    <label class="block text-gray-700 text-sm font-medium mb-2">
+                        <i class="fas fa-user mr-2"></i>Username / No. HP / Email
                     </label>
-                    <input type="text" name="username" required
-                        class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
-                        placeholder="Masukkan username atau ID">
+                    <input type="text" name="username" value="{{ old('username') }}" required
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                        placeholder="Masukkan username PPPoE, HP, atau email">
+                    @error('username')
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <div class="mb-6">
-                    <label class="block text-cyan-200 text-sm font-medium mb-2">
+                    <label class="block text-gray-700 text-sm font-medium mb-2">
                         <i class="fas fa-lock mr-2"></i>Password
                     </label>
-                    <input type="password" name="password" required
-                        class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
-                        placeholder="Masukkan password">
+                    <div class="relative">
+                        <input type="password" name="password" id="password" required
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                            placeholder="Masukkan password PPPoE">
+                        <button type="button" onclick="togglePassword()" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700">
+                            <i class="fas fa-eye" id="toggleIcon"></i>
+                        </button>
+                    </div>
+                    @error('password')
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
 
-                <div class="flex items-center justify-between mb-6">
-                    <label class="flex items-center text-cyan-200 text-sm">
-                        <input type="checkbox" name="remember" class="mr-2 rounded bg-white/10 border-white/20 text-cyan-500 focus:ring-cyan-500">
-                        Ingat saya
-                    </label>
-                    <a href="#" class="text-cyan-400 text-sm hover:text-cyan-300">Lupa password?</a>
-                </div>
-
-                <button type="submit"
-                    class="w-full bg-gradient-to-r from-cyan-500 to-blue-600 text-white py-3 rounded-lg font-semibold hover:from-cyan-600 hover:to-blue-700 transition-all duration-300 shadow-lg">
+                <button type="submit" class="w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-3 rounded-lg font-semibold hover:from-blue-600 hover:to-indigo-700 transition transform hover:scale-[1.02]">
                     <i class="fas fa-sign-in-alt mr-2"></i>Masuk
                 </button>
             </form>
+
+            <div class="mt-6 text-center">
+                <p class="text-gray-500 text-sm">
+                    Gunakan username dan password PPPoE Anda untuk login
+                </p>
+            </div>
+
+            <div class="mt-6 pt-6 border-t border-gray-200">
+                <div class="flex justify-center space-x-4 text-sm">
+                    <a href="{{ url('/') }}" class="text-blue-600 hover:text-blue-800">
+                        <i class="fas fa-home mr-1"></i>Beranda
+                    </a>
+                    <a href="{{ route('voucher.buy') }}" class="text-blue-600 hover:text-blue-800">
+                        <i class="fas fa-ticket mr-1"></i>Beli Voucher
+                    </a>
+                </div>
+            </div>
         </div>
 
-        <!-- Footer Links -->
-        <div class="text-center mt-6 space-y-2">
-            <a href="{{ route('voucher.buy') }}" class="block text-cyan-400 hover:text-cyan-300 text-sm">
-                <i class="fas fa-ticket mr-1"></i> Beli Voucher Hotspot
-            </a>
-            <a href="/" class="block text-gray-400 hover:text-gray-300 text-sm">
-                <i class="fas fa-arrow-left mr-1"></i> Kembali ke Beranda
-            </a>
-        </div>
+        <p class="text-center text-white/70 text-sm mt-6">
+            &copy; {{ date('Y') }} GEMBOK LARA - ISP Billing System
+        </p>
     </div>
+
+    <script>
+        function togglePassword() {
+            const input = document.getElementById('password');
+            const icon = document.getElementById('toggleIcon');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+    </script>
 </body>
 </html>

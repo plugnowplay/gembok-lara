@@ -7,8 +7,6 @@ use App\Models\Customer;
 use App\Models\Invoice;
 use App\Services\PaymentGatewayService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 
 class CustomerController extends Controller
 {
@@ -19,30 +17,16 @@ class CustomerController extends Controller
             'password' => 'required',
         ]);
 
+        // Find customer by pppoe_username, username, phone, or email
         $customer = Customer::where('pppoe_username', $request->username)
+            ->orWhere('username', $request->username)
             ->orWhere('phone', $request->username)
             ->orWhere('email', $request->username)
             ->first();
 
-        if ($customer) {
-            // Check password - support both plain text and hashed
-            $passwordValid = false;
-            
-            if ($customer->pppoe_password) {
-                // Try plain text comparison first (for PPPoE passwords)
-                if ($request->password === $customer->pppoe_password) {
-                    $passwordValid = true;
-                }
-                // Try bcrypt hash if it looks like a hash
-                elseif (str_starts_with($customer->pppoe_password, '$2y$')) {
-                    $passwordValid = Hash::check($request->password, $customer->pppoe_password);
-                }
-            }
-            
-            if ($passwordValid) {
-                session(['customer_id' => $customer->id]);
-                return redirect()->route('customer.dashboard');
-            }
+        if ($customer && $request->password === $customer->pppoe_password) {
+            session(['customer_id' => $customer->id]);
+            return redirect()->route('customer.dashboard');
         }
 
         return back()->with('error', 'Username atau password salah');
@@ -120,7 +104,7 @@ class CustomerController extends Controller
         
         $payments = Invoice::where('customer_id', $customer->id)
             ->where('status', 'paid')
-            ->orderBy('paid_at', 'desc')
+            ->orderBy('updated_at', 'desc')
             ->paginate(10);
 
         return view('customer.payments', compact('customer', 'payments'));
@@ -186,7 +170,7 @@ class CustomerController extends Controller
 
         if ($request->filled('password')) {
             $customer->update([
-                'pppoe_password' => $request->password, // Store as plain text for PPPoE
+                'pppoe_password' => $request->password,
             ]);
         }
 
@@ -212,7 +196,7 @@ class CustomerController extends Controller
 
         $request->validate([
             'subject' => 'required|string|max:255',
-            'category' => 'required|in:billing,technical,general,complaint',
+            'category' => 'required|in:billing,technical,installation,complaint,inquiry,other',
             'priority' => 'in:low,medium,high',
             'message' => 'required|string',
         ]);
@@ -221,10 +205,10 @@ class CustomerController extends Controller
             'ticket_number' => 'TKT-' . date('Ymd') . '-' . str_pad(\App\Models\Ticket::whereDate('created_at', today())->count() + 1, 4, '0', STR_PAD_LEFT),
             'customer_id' => $customer->id,
             'subject' => $request->subject,
+            'description' => $request->message,
             'category' => $request->category,
             'priority' => $request->priority ?? 'medium',
             'status' => 'open',
-            'message' => $request->message,
         ]);
         
         return back()->with('success', 'Tiket berhasil dikirim. Tim kami akan segera menghubungi Anda.');
