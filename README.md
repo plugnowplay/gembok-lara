@@ -253,9 +253,12 @@ Akses aplikasi di: `http://localhost:8000`
 
 ## 🔑 Akun Demo
 
-| Role | Email | Password |
-|------|-------|----------|
+| Role | Email/Username | Password |
+|------|----------------|----------|
 | **Administrator** | `admin@gembok.com` | `admin123` |
+| **Customer** | `pppoe-ahmad` atau `081299887766` | `ahmad123` |
+
+> Customer dapat login menggunakan: PPPoE username, username, nomor HP, atau email
 
 ---
 
@@ -346,7 +349,7 @@ GEMBOK LARA dibangun dengan standar keamanan Laravel:
 ### Phase 3 - Advanced Features ✅ 100% Complete
 | Feature | Status | Description |
 |---------|--------|-------------|
-| Customer Portal | ✅ | Dashboard, invoices, payments, tickets, usage |
+| Customer Portal | ✅ | Dashboard, invoices, payments, tickets, usage, profile |
 | Agent Portal | ✅ | Voucher sales, balance, transactions |
 | Collector Portal | ✅ | Invoice collection, payment processing |
 | Technician Portal | ✅ | Tasks, installations, repairs, map |
@@ -354,6 +357,7 @@ GEMBOK LARA dibangun dengan standar keamanan Laravel:
 | Advanced Reporting | ✅ | Daily/monthly reports, multi-format export |
 | Automated Billing | ✅ | Auto-generate, reminders, suspend, reactivate |
 | Public Voucher Store | ✅ | Online purchase, WhatsApp delivery |
+| GUI Integration Settings | ✅ | Mikrotik, RADIUS, GenieACS, WhatsApp, Midtrans, Xendit |
 
 ### Phase 4 - Enterprise Features ✅ 100% Complete
 | Feature | Status | Description |
